@@ -1,0 +1,289 @@
+import { useState, useEffect } from 'react';
+import { 
+  Card, 
+  Typography, 
+  Tag, 
+  Space, 
+  Row, 
+  Col, 
+  Button, 
+  Progress, 
+  Badge,
+  Avatar
+} from 'antd';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Icons, theme } from '../../theme';
+import { getCourseById } from '../../services/courseService';
+import type { Course, Lesson } from '../../types/course';
+
+const { Title, Text, Paragraph } = Typography;
+
+const CourseDetail = () => {
+  const { courseId } = useParams<{ courseId: string }>();
+  const navigate = useNavigate();
+  const [course, setCourse] = useState<Course | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch course data from API
+  useEffect(() => {
+    const fetchCourse = async () => {
+      if (!courseId) return;
+      
+      try {
+        setLoading(true);
+        const response = await getCourseById(courseId);
+        
+        // Transform API response to Course format
+        const courseData: Course = {
+          id: response.id.toString(),
+          title: response.title,
+          description: response.description,
+          thumbnail: response.thumbnail,
+          level: response.level,
+          kindOfCourse: response.kindOfCourse,
+          totalLessons: response.totalLessons,
+          progress: response.progress,
+          status: response.status,
+          lessons: response.lessons || []
+        };
+        
+        setCourse(courseData);
+      } catch (error) {
+        console.error('Error fetching course:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourse();
+  }, [courseId]);
+
+  const handleBackToCourses = () => {
+    navigate('/courses');
+  };
+
+  const handleLessonClick = (lesson: Lesson) => {
+    // TODO: Navigate to lesson detail or open video
+    console.log('Opening lesson:', lesson.title);
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return 'success';
+      case 'in-progress':
+        return 'processing';
+      default:
+        return 'default';
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return 'Hoàn thành';
+      case 'in-progress':
+        return 'Đang học';
+      default:
+        return 'Chưa bắt đầu';
+    }
+  };
+
+  const formatDuration = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    if (hours > 0) {
+      return `${hours}h ${mins}m`;
+    }
+    return `${mins}m`;
+  };
+
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '50vh' 
+      }}>
+        <Icons.Loading style={{ fontSize: 24 }} />
+      </div>
+    );
+  }
+
+  if (!course) {
+    return (
+      <div style={{ textAlign: 'center', padding: theme.spacing['2xl'] }}>
+        <Text>Không tìm thấy khóa học</Text>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ minHeight: '100vh', background: theme.colors.background.tertiary }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: theme.spacing.lg }}>
+        {/* Back Button */}
+        <Button 
+          icon={<Icons.ArrowLeft />} 
+          onClick={handleBackToCourses}
+          style={{ marginBottom: theme.spacing.lg }}
+        >
+          Quay lại danh sách
+        </Button>
+
+        {/* Course Header */}
+        <Card style={{ marginBottom: theme.spacing.lg, borderRadius: theme.borderRadius.lg }}>
+          <Row gutter={[24, 24]}>
+            <Col xs={24} lg={8}>
+              <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', backgroundColor: theme.colors.background.secondary, borderRadius: theme.borderRadius.md }}>
+                <img
+                  alt={course.title}
+                  src={course.thumbnail}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: theme.borderRadius.md
+                  }}
+                />
+              </div>
+            </Col>
+            <Col xs={24} lg={16}>
+              <div style={{ padding: theme.spacing.md }}>
+                {/* Course Type and Level */}
+                <Space size={8} style={{ marginBottom: theme.spacing.sm }}>
+                  <Tag color="blue" style={{ borderRadius: theme.borderRadius.sm }}>
+                    {course.kindOfCourse}
+                  </Tag>
+                  <Tag color="green" style={{ borderRadius: theme.borderRadius.sm }}>
+                    {course.level}
+                  </Tag>
+                  {course.status && (
+                    <Tag color={getStatusColor(course.status)} style={{ borderRadius: theme.borderRadius.sm }}>
+                      {getStatusText(course.status)}
+                    </Tag>
+                  )}
+                </Space>
+
+                {/* Course Title */}
+                <Title level={2} style={{ marginBottom: theme.spacing.sm, color: theme.colors.text.primary }}>
+                  {course.title}
+                </Title>
+
+                {/* Progress */}
+                <div style={{ marginBottom: theme.spacing.md }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: theme.spacing.sm }}>
+                    <Text strong>Tiến độ khóa học</Text>
+                    <Text>{course.progress}%</Text>
+                  </div>
+                  <Progress 
+                    percent={course.progress} 
+                    strokeColor={theme.colors.primary}
+                    style={{ marginBottom: theme.spacing.sm }}
+                  />
+                  <Space>
+                    <Icons.Book style={{ color: theme.colors.text.secondary }} />
+                    <Text type="secondary">{course.totalLessons} bài học</Text>
+                  </Space>
+                </div>
+
+                {/* Action Buttons */}
+                <Space>
+                  <Button type="primary" size="large" icon={<Icons.Play />}>
+                    Tiếp tục học
+                  </Button>
+                  <Button size="large" icon={<Icons.Video />}>
+                    Xem trước
+                  </Button>
+                </Space>
+              </div>
+            </Col>
+          </Row>
+        </Card>
+
+        {/* Course Description */}
+        <Card 
+          title={
+            <Space>
+              <Icons.FileText />
+              <span>Mô tả khóa học</span>
+            </Space>
+          }
+          style={{ marginBottom: theme.spacing.lg, borderRadius: theme.borderRadius.lg }}
+        >
+          <Paragraph style={{ fontSize: theme.typography.fontSize.base, lineHeight: theme.typography.lineHeight.relaxed }}>
+            {course.description}
+          </Paragraph>
+        </Card>
+
+        {/* Lessons List */}
+        <Card 
+          title={
+            <Space>
+              <Icons.Book />
+              <span>Danh sách bài học</span>
+              <Badge count={course.lessons.length} style={{ backgroundColor: theme.colors.primary }} />
+            </Space>
+          }
+          style={{ borderRadius: theme.borderRadius.lg }}
+        >
+          <Row gutter={[16, 16]}>
+            {course.lessons.map((lesson, index) => (
+              <Col xs={24} key={lesson.id}>
+                <Card
+                  hoverable
+                  onClick={() => handleLessonClick(lesson)}
+                  style={{ 
+                    borderRadius: theme.borderRadius.md,
+                    border: lesson.status === 'in-progress' ? `2px solid ${theme.colors.primary}` : '1px solid #d9d9d9'
+                  }}
+                >
+                  <Row gutter={16} align="middle">
+                    <Col xs={2} sm={1}>
+                      <Avatar 
+                        size={40}
+                        style={{ 
+                          backgroundColor: lesson.status === 'completed' ? theme.colors.success : 
+                                          lesson.status === 'in-progress' ? theme.colors.primary : 
+                                          theme.colors.text.disabled
+                        }}
+                      >
+                        {lesson.status === 'completed' ? <Icons.CheckSimple /> : index + 1}
+                      </Avatar>
+                    </Col>
+                    <Col xs={22} sm={15}>
+                      <div>
+                        <Title level={5} style={{ margin: 0, marginBottom: theme.spacing.xs }}>
+                          {lesson.title}
+                        </Title>
+                        <Text type="secondary" style={{ fontSize: theme.typography.fontSize.sm }}>
+                          {lesson.description}
+                        </Text>
+                      </div>
+                    </Col>
+                    <Col xs={24} sm={8}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Space>
+                          <Icons.Clock style={{ color: theme.colors.text.secondary }} />
+                          <Text type="secondary">{formatDuration(lesson.duration)}</Text>
+                        </Space>
+                        <Tag color={getStatusColor(lesson.status)} style={{ borderRadius: theme.borderRadius.sm }}>
+                          {getStatusText(lesson.status)}
+                        </Tag>
+                      </div>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default CourseDetail;
