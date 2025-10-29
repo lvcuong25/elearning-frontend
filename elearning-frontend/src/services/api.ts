@@ -1,51 +1,43 @@
+import axios from 'axios';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
 const API_BASE_URL = 'https://dummyjson.com';
 
-// Base fetch wrapper
-export const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
-  const url = `${API_BASE_URL}${endpoint}`;
-  
-  const config: RequestInit = {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-    ...options,
-  };
+// Tạo axios instance
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
-  const response = await fetch(url, config);
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `HTTP Error! Status: ${response.status}`);
-  }
-
-  return await response.json();
+// Base API functions (internal use only)
+const api = {
+  get: (endpoint: string) => apiClient.get(endpoint).then(res => res.data),
+  post: (endpoint: string, data?: any) => apiClient.post(endpoint, data).then(res => res.data),
+  put: (endpoint: string, data?: any) => apiClient.put(endpoint, data).then(res => res.data),
+  delete: (endpoint: string) => apiClient.delete(endpoint).then(res => res.data),
 };
 
-// GET request
-export const get = (endpoint: string, options?: RequestInit) => {
-  return apiRequest(endpoint, { ...options, method: 'GET' });
-};
-
-// POST request
-export const post = (endpoint: string, data?: any, options?: RequestInit) => {
-  return apiRequest(endpoint, {
+// React Query hooks
+export const useApiQuery = (queryKey: string[], queryFn: () => Promise<any>, options?: any) => {
+  return useQuery({
+    queryKey,
+    queryFn,
     ...options,
-    method: 'POST',
-    body: data ? JSON.stringify(data) : undefined,
   });
 };
 
-// PUT request
-export const put = (endpoint: string, data?: any, options?: RequestInit) => {
-  return apiRequest(endpoint, {
+export const useApiMutation = (mutationFn: (variables: any) => Promise<any>, options?: any) => {
+  return useMutation({
+    mutationFn,
     ...options,
-    method: 'PUT',
-    body: data ? JSON.stringify(data) : undefined,
   });
 };
 
-// DELETE request
-export const del = (endpoint: string, options?: RequestInit) => {
-  return apiRequest(endpoint, { ...options, method: 'DELETE' });
+export const useApiQueryClient = () => {
+  return useQueryClient();
 };
+
+// Export api for internal use in services
+export { api };

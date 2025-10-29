@@ -1,17 +1,16 @@
 
-import { get } from './api';
+import { useQuery } from '@tanstack/react-query';
+import { api } from './api';
 
 const COURSES_ENDPOINT = '/c/227a-8f09-4533-82b6';
 
+// Keep original function names for external usage
 export const getAllCourses = async (page: number = 1, limit: number = 9) => {
-  // Fetch all courses from custom collection
-  const response = await get(COURSES_ENDPOINT);
-  
-  // Client-side pagination since custom collection doesn't support limit/skip
+  const response = await api.get(COURSES_ENDPOINT);
   const startIndex = (page - 1) * limit;
   const endIndex = startIndex + limit;
   const courses = response.courses.slice(startIndex, endIndex);
-  
+
   return {
     courses,
     total: response.courses.length,
@@ -23,13 +22,27 @@ export const getAllCourses = async (page: number = 1, limit: number = 9) => {
 };
 
 export const getCourseById = async (id: string) => {
-  // Fetch all courses and find by id
-  const response = await get(COURSES_ENDPOINT);
+  const response = await api.get(COURSES_ENDPOINT);
   const course = response.courses.find((c: any) => c.id.toString() === id);
-  
   if (!course) {
     throw new Error('Course not found');
   }
-  
   return course;
+};
+
+// React Query hooks
+export const useCourses = (page: number = 1, limit: number = 9) => {
+  return useQuery({
+    queryKey: ['courses', page, limit],
+    queryFn: () => getAllCourses(page, limit)
+  });
+};
+
+export const useCourse = (id: string) => {
+  return useQuery({
+    queryKey: ['course', id],
+    queryFn: () => getCourseById(id),
+    enabled: !!id
+    
+  });
 };

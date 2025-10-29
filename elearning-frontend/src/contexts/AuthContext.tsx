@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { User, LoginCredentials } from '../types/auth';
 
 interface AuthContextType {
@@ -6,6 +7,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (credentials: LoginCredentials) => void;
   logout: () => void;
+  isLoading: boolean;
+  error: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,6 +32,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
+  const queryClient = useQueryClient();
   const isAuthenticated = !!user;
 
   // Save user to localStorage whenever it changes
@@ -40,34 +44,53 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, [user]);
 
-  const login = (credentials: LoginCredentials) => {
-    if (credentials.email === 'emily.johnson@x.dummyjson.com' && credentials.password === 'emilyspass123') {
-      setUser({
-        id: 1,
-        username: 'emilys',
-        email: 'emily.johnson@x.dummyjson.com',
-        firstName: 'Emily',
-        lastName: 'Johnson',
-        gender: 'female',
-        image: 'https://dummyjson.com/icon/emilys/128',
-        accessToken: 'dummy-token',
-        refreshToken: 'dummy-refresh-token',
-        role: 'admin'
-      });
-    } else {
-      throw new Error('Tên đăng nhập hoặc mật khẩu không đúng');
+  // Hardcoded login mutation with TanStack Query
+  const loginMutation = useMutation({
+    mutationFn: async (credentials: LoginCredentials) => {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      if (credentials.email === 'emily.johnson@x.dummyjson.com' && credentials.password === 'emilyspass123') {
+        return {
+          id: 1,
+          username: 'emilys',
+          email: 'emily.johnson@x.dummyjson.com',
+          firstName: 'Emily',
+          lastName: 'Johnson',
+          gender: 'female',
+          image: 'https://dummyjson.com/icon/emilys/128',
+          accessToken: 'dummy-token',
+          refreshToken: 'dummy-refresh-token',
+          role: 'admin'
+        };
+      } else {
+        throw new Error('Tên đăng nhập hoặc mật khẩu không đúng');
+      }
+    },
+    onSuccess: (data) => {
+      setUser(data);
+      // Invalidate user-related queries
+      queryClient.invalidateQueries({ queryKey: ['user'] });
     }
+  });
+
+  const login = (credentials: LoginCredentials) => {
+    loginMutation.mutate(credentials);
   };
 
   const logout = () => {
     setUser(null);
+    // Invalidate all queries on logout
+    queryClient.clear();
   };
 
   const value: AuthContextType = {
     user,
     isAuthenticated,
     login,
-    logout
+    logout,
+    isLoading: loginMutation.isPending,
+    error: loginMutation.error?.message || null
   };
 
   return (

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Form, Input, Button, Card, Typography, Avatar, Space, Divider } from 'antd';
@@ -8,22 +9,31 @@ import { useAuth } from '../../hooks/useAuth';
 const { Title, Text, Paragraph } = Typography;
 
 const Login = () => {
-  const { user, login, logout } = useAuth();
+  const { user, login, logout, isLoading, error } = useAuth();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const hasLoggedInRef = useRef(false);
+  const prevUserRef = useRef(user);
 
-  const onSubmit = (data: LoginCredentials) => {
-    try {
-      login(data);
+  // Redirect to courses when login successful (only when user changes from null to user)
+  useEffect(() => {
+    if (user && !prevUserRef.current && hasLoggedInRef.current) {
       toast.success('Đăng nhập thành công!');
       navigate('/courses');
-    } catch (error) {
-      toast.error('Đăng nhập thất bại: ' + (error instanceof Error ? error.message : 'Lỗi không xác định'));
     }
-  };
+    prevUserRef.current = user;
+  }, [user, navigate]);
+
+  // Show error toast when login fails
+  useEffect(() => {
+    if (error) {
+      toast.error('Đăng nhập thất bại: ' + error);
+    }
+  }, [error]);
 
   const onFinish = (values: LoginCredentials) => {
-    onSubmit(values);
+    hasLoggedInRef.current = true;
+    login(values);
   };
 
   if (user) {
@@ -171,6 +181,8 @@ const Login = () => {
               htmlType="submit"
               size="large"
               block
+              loading={isLoading}
+              disabled={isLoading}
               style={{
                 height: '48px',
                 fontSize: '16px',
