@@ -2,10 +2,11 @@ import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Form, Input, Button, Card, Typography, Avatar, Space, Divider } from 'antd';
-import { UserOutlined, LockOutlined, BookOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import type { LoginCredentials } from '../../types/auth';
 import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../hooks/useTheme';
+import { Icons } from '../../theme';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -118,7 +119,7 @@ const Login = () => {
             margin: '0 auto',
             boxShadow: '0 8px 16px rgba(24, 144, 255, 0.3)'
           }}>
-            <BookOutlined style={{ fontSize: '32px', color: 'white' }} />
+            <Icons.User style={{ fontSize: '32px', color: 'white' }} />
           </div>
           <div>
             <Title level={2} style={{ margin: 0 }}>
