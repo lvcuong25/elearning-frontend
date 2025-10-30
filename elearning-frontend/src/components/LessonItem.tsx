@@ -42,7 +42,12 @@ const LessonItem = ({
   };
 
   const handleCardClick = () => {
-    onOpen?.();
+    if (status !== 'completed') {
+      setLessonStatus(courseId, lessonId, 'completed');
+      setStatus('completed');
+      return; // first click marks completed; do not open yet
+    }
+    onOpen?.(); // subsequent clicks open detail
   };
 
   const getStatusColor = (s: LessonStatus) => {
