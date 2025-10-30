@@ -121,6 +121,7 @@ const CoursesList = () => {
                       <CourseCard 
                         course={course} 
                         onViewDetails={handleViewDetails}
+                        showStatusTag
                       />
                     </Col>
                   ))}

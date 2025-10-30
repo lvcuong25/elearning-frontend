@@ -4,19 +4,20 @@ import { Card, Typography, Space, Tag, Button } from 'antd';
 import { theme, Icons } from '../../theme';
 import { getCourseById } from '../../services/courseService';
 import type { Course, Lesson } from '../../types/course';
-import { useAuth } from '../../hooks/useAuth';
-import { useMarkLessonComplete } from '../../services/progressService';
+// import { useAuth } from '../../hooks/useAuth';
+import { useProgress } from '../../hooks/useProgress';
 
 const { Title, Text, Paragraph } = Typography;
 
 const LessonDetail = () => {
   const { courseId, lessonId } = useParams<{ courseId: string; lessonId: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  // auth removed for now; add back when syncing with server
+  const { getLessonStatus, setLessonStatus } = useProgress();
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const { mutate: markComplete, isPending } = useMarkLessonComplete();
+  const isPending = false;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,12 +50,18 @@ const LessonDetail = () => {
     return course.lessons.find(l => l.id.toString() === lessonId);
   }, [course, lessonId]);
 
+  const effectiveStatus: Lesson['status'] | 'in-progress' = (() => {
+    if (!courseId || !lessonId) return (lesson?.status as any) || 'not-started';
+    return getLessonStatus(String(courseId), String(lessonId), (lesson?.status as any) || 'not-started') as any;
+  })();
+
   const handleBack = () => {
     navigate(`/courses/${courseId}`);
   };
 
   const handleMarkCompleted = () => {
-    if (!user?.id || !courseId || !lessonId || !lesson) return;
+    if (!courseId || !lessonId) return;
+    setLessonStatus(String(courseId), String(lessonId), 'completed' as any);
     setCourse(prev => {
       if (!prev) return prev;
       const updatedLessons: Lesson[] = prev.lessons.map(l =>
@@ -62,7 +69,6 @@ const LessonDetail = () => {
       );
       return { ...prev, lessons: updatedLessons };
     });
-    markComplete({ userId: String(user.id), courseId: String(courseId), lessonId: String(lessonId) });
   };
 
   if (loading) {
@@ -101,8 +107,8 @@ const LessonDetail = () => {
             <Space>
               <Icons.Clock style={{ color: theme.colors.text.secondary }} />
               <Text type="secondary">{lesson.duration} phút</Text>
-              <Tag color={lesson.status === 'completed' ? 'success' : 'default'}>
-                {lesson.status === 'completed' ? 'Hoàn thành' : 'Chưa bắt đầu'}
+              <Tag color={effectiveStatus === 'completed' ? 'success' : effectiveStatus === 'in-progress' ? 'processing' : 'default'}>
+                {effectiveStatus === 'completed' ? 'Hoàn thành' : effectiveStatus === 'in-progress' ? 'Đang học' : 'Chưa bắt đầu'}
               </Tag>
             </Space>
 
@@ -111,7 +117,7 @@ const LessonDetail = () => {
             </Paragraph>
 
             <Space>
-              <Button type="primary" icon={<Icons.CheckSimple />} onClick={handleMarkCompleted} loading={isPending} disabled={lesson.status === 'completed'}>
+              <Button type="primary" icon={<Icons.CheckSimple />} onClick={handleMarkCompleted} loading={isPending} disabled={effectiveStatus === 'completed'}>
                 Đánh dấu hoàn thành
               </Button>
               <Button icon={<Icons.ArrowLeft />} onClick={handleBack}>Quay lại khóa học</Button>

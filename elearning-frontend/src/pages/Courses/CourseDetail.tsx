@@ -8,13 +8,14 @@ import {
   Col, 
   Button, 
   Progress, 
-  Badge,
-  Avatar
+  Badge
 } from 'antd';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Icons, theme } from '../../theme';
 import { getCourseById } from '../../services/courseService';
-import type { Course, Lesson } from '../../types/course';
+import type { Course } from '../../types/course';
+import LessonItem from '../../components/LessonItem';
+import { useProgress } from '../../hooks/useProgress';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -23,6 +24,7 @@ const CourseDetail = () => {
   const navigate = useNavigate();
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
+  const { getCourseProgressPercent, getLessonStatus, getCourseStatus } = useProgress();
 
   // Fetch course data from API
   useEffect(() => {
@@ -62,9 +64,7 @@ const CourseDetail = () => {
     navigate('/courses');
   };
 
-  const handleLessonClick = (lesson: Lesson) => {
-    navigate(`/courses/${courseId}/lessons/${lesson.id}`);
-  };
+  // navigation handled inside LessonItem via onOpen
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -84,14 +84,7 @@ const CourseDetail = () => {
     }
   };
 
-  const formatDuration = (minutes: number) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    if (hours > 0) {
-      return `${hours}h ${mins}m`;
-    }
-    return `${mins}m`;
-  };
+  // removed unused formatDuration
 
   if (loading) {
     return (
@@ -172,10 +165,10 @@ const CourseDetail = () => {
                 <div style={{ marginBottom: theme.spacing.md }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: theme.spacing.sm }}>
                     <Text strong>Tiến độ khóa học</Text>
-                    <Text>{course.progress}%</Text>
+                    <Text>{getCourseProgressPercent(course.id, course.totalLessons)}%</Text>
                   </div>
                   <Progress 
-                    percent={course.progress} 
+                    percent={getCourseProgressPercent(course.id, course.totalLessons)} 
                     strokeColor={theme.colors.primary}
                     style={{ marginBottom: theme.spacing.sm }}
                   />
@@ -187,8 +180,25 @@ const CourseDetail = () => {
 
                 {/* Action Buttons */}
                 <Space>
-                  <Button type="primary" size="large" icon={<Icons.Play />}>
-                    Tiếp tục học
+                  <Button 
+                    type="primary" 
+                    size="large" 
+                    icon={<Icons.Play />}
+                    onClick={() => {
+                      if (!course || !course.lessons.length) return;
+                      // Prefer first not-started; then any in-progress; else first lesson
+                      const notStarted = course.lessons.find(l => getLessonStatus(course.id, l.id, (l.status as any) || 'not-started') === 'not-started');
+                      const inProgress = course.lessons.find(l => getLessonStatus(course.id, l.id, (l.status as any) || 'not-started') === 'in-progress');
+                      const target = notStarted || inProgress || course.lessons[0];
+                      navigate(`/courses/${course.id}/lessons/${target.id}`);
+                    }}
+                  >
+                    {(() => {
+                      const st = getCourseStatus(course.id, course.totalLessons);
+                      if (st === 'not-started') return 'Bắt đầu học';
+                      if (st === 'completed') return 'Hoàn thành';
+                      return 'Tiếp tục học';
+                    })()}
                   </Button>
                   <Button size="large" icon={<Icons.Video />}>
                     Xem trước
@@ -226,50 +236,18 @@ const CourseDetail = () => {
           style={{ borderRadius: theme.borderRadius.lg }}
         >
           <Row gutter={[16, 16]}>
-            {course.lessons.map((lesson, index) => (
-              <Col xs={24} key={lesson.id}>
-                <Card
-                  hoverable
-                  onClick={() => handleLessonClick(lesson)}
-                  style={{ 
-                    borderRadius: theme.borderRadius.md,
-                    border: lesson.status === 'completed' ? `2px solid ${theme.colors.success}` : '1px solid #d9d9d9'
-                  }}
-                >
-                  <Row gutter={16} align="middle">
-                    <Col xs={2} sm={1}>
-                      <Avatar 
-                        size={40}
-                        style={{ 
-                          backgroundColor: lesson.status === 'completed' ? theme.colors.success : theme.colors.text.disabled
-                        }}
-                      >
-                        {lesson.status === 'completed' ? <Icons.CheckSimple /> : index + 1}
-                      </Avatar>
-                    </Col>
-                    <Col xs={22} sm={15}>
-                      <div>
-                        <Title level={5} style={{ margin: 0, marginBottom: theme.spacing.xs }}>
-                          {lesson.title}
-                        </Title>
-                        <Text type="secondary" style={{ fontSize: theme.typography.fontSize.sm }}>
-                          {lesson.description}
-                        </Text>
-                      </div>
-                    </Col>
-                    <Col xs={24} sm={8}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Space>
-                          <Icons.Clock style={{ color: theme.colors.text.secondary }} />
-                          <Text type="secondary">{formatDuration(lesson.duration)}</Text>
-                        </Space>
-                        <Tag color={getStatusColor(lesson.status)} style={{ borderRadius: theme.borderRadius.sm }}>
-                          {getStatusText(lesson.status)}
-                        </Tag>
-                      </div>
-                    </Col>
-                  </Row>
-                </Card>
+            {course.lessons.map((l, index) => (
+              <Col xs={24} key={l.id}>
+                <LessonItem
+                  courseId={course.id}
+                  lessonId={l.id}
+                  title={l.title}
+                  description={l.description}
+                  duration={l.duration}
+                  order={index + 1}
+                  initialStatus={(l.status as any) || 'not-started'}
+                  onOpen={() => navigate(`/courses/${course.id}/lessons/${l.id}`)}
+                />
               </Col>
             ))}
           </Row>

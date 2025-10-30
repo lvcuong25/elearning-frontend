@@ -1,16 +1,22 @@
 import { Card, Tag, Progress, Typography, Space } from 'antd';
 import type { Course } from '../types/course';
 import { Icons, theme } from '../theme';
-import Button from './Custom/Button';
+// Button removed; entire card is clickable
+import { useProgress } from '../hooks/useProgress';
 
 const { Title, Text, Paragraph } = Typography;
 
 interface CourseCardProps {
   course: Course;
   onViewDetails?: (course: Course) => void;
+  showStatusTag?: boolean; // show Đang học/Hoàn thành tag
+  showProgressBar?: boolean; // show % bar
 }
 
-const CourseCard = ({ course, onViewDetails }: CourseCardProps) => {
+const CourseCard = ({ course, onViewDetails, showStatusTag = false, showProgressBar = false }: CourseCardProps) => {
+  const { getCourseProgressPercent, getCourseStatus } = useProgress();
+  const computedPercent = showProgressBar ? getCourseProgressPercent(course.id, course.totalLessons) : 0;
+  const computedStatus = (showStatusTag || showProgressBar) ? getCourseStatus(course.id, course.totalLessons) : undefined as any;
   const handleViewDetails = () => {
     if (onViewDetails) {
       onViewDetails(course);
@@ -20,7 +26,8 @@ const CourseCard = ({ course, onViewDetails }: CourseCardProps) => {
   return (
     <Card
       hoverable
-      style={{ height: '100%', borderRadius: theme.borderRadius.md }}
+      onClick={handleViewDetails}
+      style={{ height: '100%', borderRadius: theme.borderRadius.md, cursor: 'pointer' }}
       cover={
         <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', backgroundColor: theme.colors.background.secondary }}>
           <img
@@ -38,15 +45,6 @@ const CourseCard = ({ course, onViewDetails }: CourseCardProps) => {
           />
         </div>
       }
-      actions={[
-        <Button 
-          variant="primary" 
-          block 
-          onClick={handleViewDetails}
-        >
-          Xem chi tiết
-        </Button>
-      ]}
     >
       {/* Course Type and Level Tags */}
       <Space size={8} style={{ marginBottom: theme.spacing.sm }}>
@@ -98,22 +96,19 @@ const CourseCard = ({ course, onViewDetails }: CourseCardProps) => {
             {course.totalLessons} bài học
           </Text>
         </Space>
-        
-        {/* Progress if available */}
-        {course.progress !== undefined && (
+        {showStatusTag && (
           <Space>
-            <Icons.Trophy style={{ color: theme.colors.text.secondary, fontSize: theme.typography.fontSize.sm }} />
-            <Text type="secondary" style={{ fontSize: theme.typography.fontSize.sm }}>
-              {course.progress}%
-            </Text>
+            <Tag color={computedStatus === 'completed' ? 'success' : computedStatus === 'in-progress' ? 'processing' : 'default'}>
+              {computedStatus === 'completed' ? 'Hoàn thành' : computedStatus === 'in-progress' ? 'Đang học' : 'Chưa bắt đầu'}
+            </Tag>
           </Space>
         )}
       </div>
 
-      {/* Progress Bar - Only show if progress exists */}
-      {course.progress !== undefined && (
+      {/* Progress Bar hidden by default */}
+      {showProgressBar && (
         <Progress 
-          percent={course.progress} 
+          percent={computedPercent} 
           size="small" 
           strokeColor={theme.colors.primary}
           showInfo={false}
