@@ -41,7 +41,8 @@ const Header = () => {
             onClick={handleLogout}
             style={{
               borderRadius: '8px',
-              height: '36px',
+              height: '44px',
+              padding: '0 16px',
               fontWeight: '500'
             }}
           >
@@ -56,7 +57,8 @@ const Header = () => {
             background: 'linear-gradient(135deg, #1890ff 0%, #722ed1 100%)',
             border: 'none',
             borderRadius: '8px',
-            height: '36px',
+            height: '44px',
+            padding: '0 16px',
             fontWeight: '500'
           }}
         >

@@ -67,14 +67,18 @@ const LessonItem = ({
   };
 
   return (
-    <Card style={{ borderRadius: 8, border: status === 'completed' ? '2px solid #52c41a' : '1px solid #d9d9d9' }} onClick={handleCardClick}>
+    <Card 
+      style={{ borderRadius: 12, border: status === 'completed' ? '2px solid #52c41a' : '1px solid #d9d9d9' }} 
+      bodyStyle={{ padding: 16 }}
+      onClick={handleCardClick}
+    >
       <Row gutter={16} align="middle">
-        <Col xs={2} sm={1}>
-          <Avatar size={40} style={{ backgroundColor: status === 'completed' ? '#52c41a' : '#bfbfbf' }}>
+        <Col xs={3} sm={1}>
+          <Avatar size={44} style={{ backgroundColor: status === 'completed' ? '#52c41a' : '#bfbfbf' }}>
             {status === 'completed' ? '✓' : order}
           </Avatar>
         </Col>
-        <Col xs={22} sm={15}>
+        <Col xs={21} sm={15}>
           <div>
             <Title level={5} style={{ margin: 0 }}>{title}</Title>
             <Text type="secondary">{description}</Text>
@@ -84,7 +88,7 @@ const LessonItem = ({
           </div>
         </Col>
         <Col xs={24} sm={8}>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, alignItems: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, alignItems: 'center', marginTop: 8 }}>
             <Space>
               <Tag color={getStatusColor(status)}>
                 {getStatusText(status)}

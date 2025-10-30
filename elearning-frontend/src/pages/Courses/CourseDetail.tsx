@@ -200,7 +200,7 @@ const CourseDetail = () => {
                       return 'Tiếp tục học';
                     })()}
                   </Button>
-                  <Button size="large" icon={<Icons.Video />}>
+                  <Button size="large" icon={<Icons.Video />} style={{ height: 44, padding: '0 16px' }}>
                     Xem trước
                   </Button>
                 </Space>

@@ -117,10 +117,10 @@ const LessonDetail = () => {
             </Paragraph>
 
             <Space>
-              <Button type="primary" icon={<Icons.CheckSimple />} onClick={handleMarkCompleted} loading={isPending} disabled={effectiveStatus === 'completed'}>
+              <Button type="primary" icon={<Icons.CheckSimple />} onClick={handleMarkCompleted} loading={isPending} disabled={effectiveStatus === 'completed'} style={{ height: 44, padding: '0 16px' }}>
                 Đánh dấu hoàn thành
               </Button>
-              <Button icon={<Icons.ArrowLeft />} onClick={handleBack}>Quay lại khóa học</Button>
+              <Button icon={<Icons.ArrowLeft />} onClick={handleBack} style={{ height: 44, padding: '0 16px' }}>Quay lại khóa học</Button>
             </Space>
           </Space>
         </Card>
