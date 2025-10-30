@@ -109,7 +109,7 @@ const CourseDetail = () => {
 
   return (
     <div style={{ minHeight: '100vh', background: theme.colors.background.tertiary }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: theme.spacing.lg }}>
+      <div className="px-4 md:px-6 lg:px-8" style={{ maxWidth: '1200px', margin: '0 auto', padding: theme.spacing.lg }}>
         {/* Back Button */}
         <Button 
           icon={<Icons.ArrowLeft />} 
@@ -157,7 +157,7 @@ const CourseDetail = () => {
                 </Space>
 
                 {/* Course Title */}
-                <Title level={2} style={{ marginBottom: theme.spacing.sm, color: theme.colors.text.primary }}>
+                <Title level={2} className="text-xl md:text-2xl lg:text-3xl" style={{ marginBottom: theme.spacing.sm, color: theme.colors.text.primary }}>
                   {course.title}
                 </Title>
 
@@ -219,7 +219,7 @@ const CourseDetail = () => {
           }
           style={{ marginBottom: theme.spacing.lg, borderRadius: theme.borderRadius.lg }}
         >
-          <Paragraph style={{ fontSize: theme.typography.fontSize.base, lineHeight: theme.typography.lineHeight.relaxed }}>
+          <Paragraph className="text-sm md:text-base" style={{ lineHeight: theme.typography.lineHeight.relaxed }}>
             {course.description}
           </Paragraph>
         </Card>

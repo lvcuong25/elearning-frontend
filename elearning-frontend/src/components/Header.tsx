@@ -17,9 +17,9 @@ const Header = () => {
 
   return (
     <AntHeader
+      className="px-4 md:px-6 lg:px-8"
       style={{
         background: '#ffffff',
-        padding: '0 24px',
         borderBottom: '1px solid #f0f0f0',
         display: 'flex',
         alignItems: 'center',

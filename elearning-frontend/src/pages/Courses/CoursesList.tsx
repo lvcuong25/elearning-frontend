@@ -40,12 +40,12 @@ const CoursesList = () => {
 
   return (
     <div style={{ minHeight: '100vh', background: theme.colors.background.tertiary }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: theme.spacing.lg }}>
+      <div className="px-4 md:px-6 lg:px-8" style={{ maxWidth: '1200px', margin: '0 auto', padding: theme.spacing.lg }}>
         {/* Header */}
         <div style={{ marginBottom: theme.spacing.lg }}>
           <Space align="center" style={{ marginBottom: theme.spacing.sm }}>
             <Icons.Book style={{ fontSize: theme.typography.fontSize['2xl'], color: theme.colors.primary }} />
-            <Title level={2} style={{ margin: 0, color: theme.colors.text.primary }}>
+            <Title level={2} className="text-xl md:text-2xl lg:text-3xl" style={{ margin: 0, color: theme.colors.text.primary }}>
               Khóa học
             </Title>
           </Space>
@@ -65,8 +65,8 @@ const CoursesList = () => {
                 allowClear
               />
             </Col>
-            <Col xs={24} sm={24} md={12} lg={10}>
-              <Space style={{ width: '100%' }} direction="horizontal" size="middle">
+            <Col xs={24} sm={24} md={12} lg={10} style={{ marginTop: 8 }}>
+              <Space className="w-full md:flex-row" style={{ width: '100%' }} direction="horizontal" size={16}>
                 <Select
                   placeholder="Cấp độ"
                   size="large"

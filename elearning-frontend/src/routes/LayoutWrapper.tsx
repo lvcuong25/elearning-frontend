@@ -19,7 +19,7 @@ const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Header />
-      <Content style={{ padding: '24px', background: '#f5f5f5' }}>
+      <Content className="px-4 md:px-6 lg:px-8" style={{ background: '#f5f5f5' }}>
         {children}
       </Content>
     </Layout>

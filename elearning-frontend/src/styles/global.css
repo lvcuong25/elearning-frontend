@@ -1,1 +1,4 @@
 /* Global styles */
+html, body {
+  min-width: 375px;
+}

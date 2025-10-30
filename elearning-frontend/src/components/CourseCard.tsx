@@ -59,11 +59,11 @@ const CourseCard = ({ course, onViewDetails, showStatusTag = false, showProgress
       {/* Course Title */}
       <Title 
         level={5} 
+        className="text-base md:text-lg lg:text-xl"
         style={{ 
           marginBottom: theme.spacing.sm, 
           minHeight: '48px',
           color: theme.colors.text.primary,
-          fontSize: theme.typography.fontSize.lg,
           fontWeight: theme.typography.fontWeight.semibold
         }}
       >
@@ -73,10 +73,10 @@ const CourseCard = ({ course, onViewDetails, showStatusTag = false, showProgress
       {/* Description - Truncated to 2 lines */}
       <Paragraph 
         ellipsis={{ rows: 2 }} 
+        className="text-xs md:text-sm lg:text-base"
         style={{ 
           marginBottom: theme.spacing.md, 
           color: theme.colors.text.secondary, 
-          fontSize: theme.typography.fontSize.sm,
           lineHeight: theme.typography.lineHeight.normal
         }}
       >

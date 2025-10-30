@@ -92,7 +92,7 @@ const LessonDetail = () => {
 
   return (
     <div style={{ minHeight: '100vh', background: theme.colors.background.tertiary }}>
-      <div style={{ maxWidth: 900, margin: '0 auto', padding: theme.spacing.lg }}>
+      <div className="px-4 md:px-6 lg:px-8" style={{ maxWidth: 900, margin: '0 auto', padding: theme.spacing.lg }}>
         <Button icon={<Icons.ArrowLeft />} onClick={handleBack} style={{ marginBottom: theme.spacing.lg }}>
           Quay lại khóa học
         </Button>
@@ -101,7 +101,7 @@ const LessonDetail = () => {
           <Space direction="vertical" size="middle" style={{ width: '100%' }}>
             <Space align="center" wrap>
               <Tag color="blue">#{lesson.order}</Tag>
-              <Title level={3} style={{ margin: 0 }}>{lesson.title}</Title>
+              <Title level={3} className="text-lg md:text-xl lg:text-2xl" style={{ margin: 0 }}>{lesson.title}</Title>
             </Space>
 
             <Space>
@@ -112,7 +112,7 @@ const LessonDetail = () => {
               </Tag>
             </Space>
 
-            <Paragraph style={{ fontSize: theme.typography.fontSize.base, lineHeight: theme.typography.lineHeight.relaxed }}>
+            <Paragraph className="text-sm md:text-base" style={{ lineHeight: theme.typography.lineHeight.relaxed }}>
               {lesson.description}
             </Paragraph>
 
