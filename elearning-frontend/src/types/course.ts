@@ -5,7 +5,7 @@ export interface Lesson {
   duration: number; // minutes
   url: string;
   description: string;
-  status: 'not-started' | 'in-progress' | 'completed'; // default not-started
+  status: 'not-started' | 'completed'; // default not-started
   order: number;
 }
 

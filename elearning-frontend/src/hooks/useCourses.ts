@@ -1,19 +1,9 @@
 import { useState } from 'react';
-import { useCourses as useCoursesQuery } from '../services/courseService';
-import type { Course } from '../types/course';
+import { useQuery } from '@tanstack/react-query';
+import { getAllCourses } from '../services/courseService';
 
-interface UseCoursesReturn {
-    courses: Course[];
-    loading: boolean;
-    error: string | null;
-    totalPages: number;
-    total: number;
-    currentPage: number;
-    setCurrentPage: (page: number) => void;
-    refetch: () => void;
-}
 
-export const useCourses = (initialPage: number = 1, limit: number = 9): UseCoursesReturn => {
+export const useCourses = (initialPage: number = 1, limit: number = 9) => {
     const [currentPage, setCurrentPage] = useState(initialPage);
     
     const { 
@@ -21,7 +11,10 @@ export const useCourses = (initialPage: number = 1, limit: number = 9): UseCours
         isLoading, 
         error, 
         refetch 
-    } = useCoursesQuery(currentPage, limit);
+    } = useQuery({
+        queryKey: ['courses', currentPage, limit],
+        queryFn: () => getAllCourses(currentPage, limit)
+    });
 
     return {
         courses: data?.courses || [],

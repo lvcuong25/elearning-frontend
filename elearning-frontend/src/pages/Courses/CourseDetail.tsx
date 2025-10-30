@@ -63,16 +63,13 @@ const CourseDetail = () => {
   };
 
   const handleLessonClick = (lesson: Lesson) => {
-    // TODO: Navigate to lesson detail or open video
-    console.log('Opening lesson:', lesson.title);
+    navigate(`/courses/${courseId}/lessons/${lesson.id}`);
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
         return 'success';
-      case 'in-progress':
-        return 'processing';
       default:
         return 'default';
     }
@@ -82,8 +79,6 @@ const CourseDetail = () => {
     switch (status) {
       case 'completed':
         return 'Hoàn thành';
-      case 'in-progress':
-        return 'Đang học';
       default:
         return 'Chưa bắt đầu';
     }
@@ -238,7 +233,7 @@ const CourseDetail = () => {
                   onClick={() => handleLessonClick(lesson)}
                   style={{ 
                     borderRadius: theme.borderRadius.md,
-                    border: lesson.status === 'in-progress' ? `2px solid ${theme.colors.primary}` : '1px solid #d9d9d9'
+                    border: lesson.status === 'completed' ? `2px solid ${theme.colors.success}` : '1px solid #d9d9d9'
                   }}
                 >
                   <Row gutter={16} align="middle">
@@ -246,9 +241,7 @@ const CourseDetail = () => {
                       <Avatar 
                         size={40}
                         style={{ 
-                          backgroundColor: lesson.status === 'completed' ? theme.colors.success : 
-                                          lesson.status === 'in-progress' ? theme.colors.primary : 
-                                          theme.colors.text.disabled
+                          backgroundColor: lesson.status === 'completed' ? theme.colors.success : theme.colors.text.disabled
                         }}
                       >
                         {lesson.status === 'completed' ? <Icons.CheckSimple /> : index + 1}
