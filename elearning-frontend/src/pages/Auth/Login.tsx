@@ -5,6 +5,7 @@ import { Form, Input, Button, Card, Typography, Avatar, Space, Divider } from 'a
 import { UserOutlined, LockOutlined, BookOutlined } from '@ant-design/icons';
 import type { LoginCredentials } from '../../types/auth';
 import { useAuth } from '../../hooks/useAuth';
+import { useTheme } from '../../hooks/useTheme';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -14,6 +15,11 @@ const Login = () => {
   const [form] = Form.useForm();
   const hasLoggedInRef = useRef(false);
   const prevUserRef = useRef(user);
+  const { theme } = useTheme();
+
+  const pageBackground = theme === 'dark'
+    ? 'linear-gradient(135deg, #0b1220 0%, #111827 100%)'
+    : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
 
   // Redirect to courses when login successful (only when user changes from null to user)
   useEffect(() => {
@@ -40,7 +46,7 @@ const Login = () => {
     return (
       <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: pageBackground,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -66,7 +72,7 @@ const Login = () => {
               {user.firstName?.[0]?.toUpperCase() || 'U'}
             </Avatar>
             <div>
-              <Title level={2} style={{ margin: 0, color: '#262626' }}>
+              <Title level={2} style={{ margin: 0 }}>
                 Chào mừng, {user.firstName} {user.lastName}!
               </Title>
               <Text type="secondary" style={{ fontSize: '16px' }}>
@@ -85,7 +91,7 @@ const Login = () => {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      background: pageBackground,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -115,10 +121,10 @@ const Login = () => {
             <BookOutlined style={{ fontSize: '32px', color: 'white' }} />
           </div>
           <div>
-            <Title level={2} style={{ margin: 0, color: '#262626' }}>
+            <Title level={2} style={{ margin: 0 }}>
               Đăng nhập
             </Title>
-            <Paragraph style={{ margin: '8px 0 0 0', color: '#8c8c8c' }}>
+            <Paragraph style={{ margin: '8px 0 0 0' }}>
               Chào mừng trở lại! Vui lòng đăng nhập để tiếp tục
             </Paragraph>
           </div>
@@ -148,7 +154,7 @@ const Login = () => {
             hasFeedback
           >
             <Input
-              prefix={<UserOutlined style={{ color: '#bfbfbf' }} />}
+              prefix={<UserOutlined />}
               placeholder="Nhập email của bạn"
               size="large"
             />
@@ -169,7 +175,7 @@ const Login = () => {
             hasFeedback
           >
             <Input.Password
-              prefix={<LockOutlined style={{ color: '#bfbfbf' }} />}
+              prefix={<LockOutlined />}
               placeholder="Nhập mật khẩu"
               size="large"
             />
@@ -187,10 +193,7 @@ const Login = () => {
                 height: '48px',
                 fontSize: '16px',
                 fontWeight: '600',
-                borderRadius: '8px',
-                background: 'linear-gradient(135deg, #1890ff 0%, #722ed1 100%)',
-                border: 'none',
-                boxShadow: '0 4px 12px rgba(24, 144, 255, 0.3)'
+                borderRadius: '8px'
               }}
             >
               Đăng nhập
