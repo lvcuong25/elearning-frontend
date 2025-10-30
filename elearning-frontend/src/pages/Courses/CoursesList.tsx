@@ -39,13 +39,13 @@ const CoursesList = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: theme.colors.background.tertiary }}>
+    <div style={{ minHeight: '100vh' }}>
       <div className="px-4 md:px-6 lg:px-8" style={{ maxWidth: '1200px', margin: '0 auto', padding: theme.spacing.lg }}>
         {/* Header */}
         <div style={{ marginBottom: theme.spacing.lg }}>
           <Space align="center" style={{ marginBottom: theme.spacing.sm }}>
             <Icons.Book style={{ fontSize: theme.typography.fontSize['2xl'], color: theme.colors.primary }} />
-            <Title level={2} className="text-xl md:text-2xl lg:text-3xl" style={{ margin: 0, color: theme.colors.text.primary }}>
+            <Title level={2} className="text-xl md:text-2xl lg:text-3xl" style={{ margin: 0 }}>
               Khóa học
             </Title>
           </Space>

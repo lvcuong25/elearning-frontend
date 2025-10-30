@@ -91,7 +91,7 @@ const LessonDetail = () => {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: theme.colors.background.tertiary }}>
+    <div style={{ minHeight: '100vh' }}>
       <div className="px-4 md:px-6 lg:px-8" style={{ maxWidth: 900, margin: '0 auto', padding: theme.spacing.lg }}>
         <Button icon={<Icons.ArrowLeft />} onClick={handleBack} style={{ marginBottom: theme.spacing.lg }}>
           Quay lại khóa học
@@ -105,7 +105,7 @@ const LessonDetail = () => {
             </Space>
 
             <Space>
-              <Icons.Clock style={{ color: theme.colors.text.secondary }} />
+              <Icons.Clock />
               <Text type="secondary">{lesson.duration} phút</Text>
               <Tag color={effectiveStatus === 'completed' ? 'success' : effectiveStatus === 'in-progress' ? 'processing' : 'default'}>
                 {effectiveStatus === 'completed' ? 'Hoàn thành' : effectiveStatus === 'in-progress' ? 'Đang học' : 'Chưa bắt đầu'}

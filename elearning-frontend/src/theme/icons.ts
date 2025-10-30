@@ -19,6 +19,8 @@ import {
   FileDoneOutlined,
   ReadOutlined,
   TrophyOutlined,
+  SunOutlined,
+  MoonOutlined,
 } from '@ant-design/icons';
 
 // Ant Design Icons cho Course
@@ -56,6 +58,10 @@ export const Icons = {
   
   // Loading
   Loading: LoadingOutlined,
+
+  // Theme
+  Sun: SunOutlined,
+  Moon: MoonOutlined,
 } as const;
 
 export type IconName = keyof typeof Icons;

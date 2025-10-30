@@ -29,7 +29,7 @@ const CourseCard = ({ course, onViewDetails, showStatusTag = false, showProgress
       onClick={handleViewDetails}
       style={{ height: '100%', borderRadius: theme.borderRadius.md, cursor: 'pointer' }}
       cover={
-        <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', backgroundColor: theme.colors.background.secondary }}>
+        <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', backgroundColor: 'transparent' }}>
           <img
             alt={course.title}
             src={course.thumbnail}
@@ -63,7 +63,6 @@ const CourseCard = ({ course, onViewDetails, showStatusTag = false, showProgress
         style={{ 
           marginBottom: theme.spacing.sm, 
           minHeight: '48px',
-          color: theme.colors.text.primary,
           fontWeight: theme.typography.fontWeight.semibold
         }}
       >
@@ -76,7 +75,6 @@ const CourseCard = ({ course, onViewDetails, showStatusTag = false, showProgress
         className="text-xs md:text-sm lg:text-base"
         style={{ 
           marginBottom: theme.spacing.md, 
-          color: theme.colors.text.secondary, 
           lineHeight: theme.typography.lineHeight.normal
         }}
       >
@@ -91,7 +89,7 @@ const CourseCard = ({ course, onViewDetails, showStatusTag = false, showProgress
         marginBottom: theme.spacing.sm
       }}>
         <Space>
-          <Icons.Book style={{ color: theme.colors.text.secondary, fontSize: theme.typography.fontSize.sm }} />
+          <Icons.Book style={{ fontSize: theme.typography.fontSize.sm }} />
           <Text type="secondary" style={{ fontSize: theme.typography.fontSize.sm }}>
             {course.totalLessons} bài học
           </Text>

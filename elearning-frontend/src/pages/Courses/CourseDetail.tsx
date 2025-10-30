@@ -108,7 +108,7 @@ const CourseDetail = () => {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: theme.colors.background.tertiary }}>
+    <div style={{ minHeight: '100vh' }}>
       <div className="px-4 md:px-6 lg:px-8" style={{ maxWidth: '1200px', margin: '0 auto', padding: theme.spacing.lg }}>
         {/* Back Button */}
         <Button 
@@ -123,7 +123,7 @@ const CourseDetail = () => {
         <Card style={{ marginBottom: theme.spacing.lg, borderRadius: theme.borderRadius.lg }}>
           <Row gutter={[24, 24]}>
             <Col xs={24} lg={8}>
-              <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', backgroundColor: theme.colors.background.secondary, borderRadius: theme.borderRadius.md }}>
+              <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', backgroundColor: 'transparent', borderRadius: theme.borderRadius.md }}>
                 <img
                   alt={course.title}
                   src={course.thumbnail}
@@ -157,7 +157,7 @@ const CourseDetail = () => {
                 </Space>
 
                 {/* Course Title */}
-                <Title level={2} className="text-xl md:text-2xl lg:text-3xl" style={{ marginBottom: theme.spacing.sm, color: theme.colors.text.primary }}>
+                <Title level={2} className="text-xl md:text-2xl lg:text-3xl" style={{ marginBottom: theme.spacing.sm }}>
                   {course.title}
                 </Title>
 
@@ -173,7 +173,7 @@ const CourseDetail = () => {
                     style={{ marginBottom: theme.spacing.sm }}
                   />
                   <Space>
-                    <Icons.Book style={{ color: theme.colors.text.secondary }} />
+                    <Icons.Book />
                     <Text type="secondary">{course.totalLessons} bài học</Text>
                   </Space>
                 </div>
