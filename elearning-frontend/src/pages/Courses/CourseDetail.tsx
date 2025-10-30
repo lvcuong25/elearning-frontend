@@ -10,6 +10,7 @@ import {
   Progress, 
   Badge
 } from 'antd';
+import { message } from 'antd';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Icons, theme } from '../../theme';
 import { getCourseById } from '../../services/courseService';
@@ -34,24 +35,10 @@ const CourseDetail = () => {
       try {
         setLoading(true);
         const response = await getCourseById(courseId);
-        
-        // Transform API response to Course format
-        const courseData: Course = {
-          id: response.id.toString(),
-          title: response.title,
-          description: response.description,
-          thumbnail: response.thumbnail,
-          level: response.level,
-          kindOfCourse: response.kindOfCourse,
-          totalLessons: response.totalLessons,
-          progress: response.progress,
-          status: response.status,
-          lessons: response.lessons || []
-        };
-        
-        setCourse(courseData);
+        setCourse({ ...response, id: response.id.toString() });
       } catch (error) {
         console.error('Error fetching course:', error);
+        message.error('Không tải được dữ liệu khóa học');
       } finally {
         setLoading(false);
       }
@@ -187,8 +174,8 @@ const CourseDetail = () => {
                     onClick={() => {
                       if (!course || !course.lessons.length) return;
                       // Prefer first not-started; then any in-progress; else first lesson
-                      const notStarted = course.lessons.find(l => getLessonStatus(course.id, l.id, (l.status as any) || 'not-started') === 'not-started');
-                      const inProgress = course.lessons.find(l => getLessonStatus(course.id, l.id, (l.status as any) || 'not-started') === 'in-progress');
+                      const notStarted = course.lessons.find(l => getLessonStatus(course.id, l.id, l.status || 'not-started') === 'not-started');
+                      const inProgress = course.lessons.find(l => getLessonStatus(course.id, l.id, l.status || 'not-started') === 'in-progress');
                       const target = notStarted || inProgress || course.lessons[0];
                       navigate(`/courses/${course.id}/lessons/${target.id}`);
                     }}
@@ -245,7 +232,7 @@ const CourseDetail = () => {
                   description={l.description}
                   duration={l.duration}
                   order={index + 1}
-                  initialStatus={(l.status as any) || 'not-started'}
+                  initialStatus={l.status || 'not-started'}
                   onOpen={() => navigate(`/courses/${course.id}/lessons/${l.id}`)}
                 />
               </Col>

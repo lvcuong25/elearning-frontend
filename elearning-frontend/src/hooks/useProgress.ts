@@ -1,4 +1,4 @@
-type LessonStatus = 'not-started' | 'in-progress' | 'completed';
+export type LessonStatus = 'not-started' | 'in-progress' | 'completed';
 
 const STORAGE_KEY = 'lessonProgress';
 

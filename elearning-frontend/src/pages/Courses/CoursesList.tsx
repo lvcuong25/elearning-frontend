@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Input, Select, Card, Pagination, Spin, Empty, Row, Col, Typography, Space } from 'antd';
+import { useState, useMemo, useCallback } from 'react';
+import { Input, Select, Card, Pagination, Spin, Empty, Row, Col, Typography, Space, Alert } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useCourses } from '../../hooks/useCourses';
 import CourseCard from '../../components/CourseCard';
@@ -16,27 +16,29 @@ const CoursesList = () => {
   const [selectedLevel, setSelectedLevel] = useState('all');
   const [selectedKind, setSelectedKind] = useState('all');
   
-  const { courses, loading, totalPages, total, setCurrentPage: setPage } = useCourses(currentPage, 9);
+  const { courses, loading, totalPages, total, setCurrentPage: setPage, error } = useCourses(currentPage, 9);
   
-  const filteredCourses = courses.filter(course => {
-    const matchSearch = !searchTerm || 
-      course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.instructor?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.duration?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchLevel = selectedLevel === 'all' || course.level === selectedLevel;
-    const matchKind = selectedKind === 'all' || course.kindOfCourse === selectedKind;
-    return matchSearch && matchLevel && matchKind;
-  });
+  const filteredCourses = useMemo(() => {
+    return courses.filter(course => {
+      const matchSearch = !searchTerm || 
+        course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course.instructor?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course.duration?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchLevel = selectedLevel === 'all' || course.level === selectedLevel;
+      const matchKind = selectedKind === 'all' || course.kindOfCourse === selectedKind;
+      return matchSearch && matchLevel && matchKind;
+    });
+  }, [courses, searchTerm, selectedLevel, selectedKind]);
   
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     setPage(page);
   };
 
-  const handleViewDetails = (course: Course) => {
+  const handleViewDetails = useCallback((course: Course) => {
     navigate(`/courses/${course.id}`);
-  };
+  }, [navigate]);
 
   return (
     <div style={{ minHeight: '100vh' }}>
@@ -51,6 +53,11 @@ const CoursesList = () => {
           </Space>
           
         </div>
+
+        {/* Error */}
+        {error && (
+          <Alert type="error" message="Không tải được danh sách khóa học" description={error} showIcon style={{ marginBottom: theme.spacing.lg }} />
+        )}
 
         {/* Search and Filter */}
         <Card style={{ marginBottom: theme.spacing.lg, borderRadius: theme.borderRadius.md }}>

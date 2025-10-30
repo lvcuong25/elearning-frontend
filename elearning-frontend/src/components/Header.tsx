@@ -37,6 +37,7 @@ const Header = () => {
           <Segmented
             value={theme}
             onChange={(val) => setTheme(val as 'light' | 'dark')}
+            aria-label="Chuyển giao diện"
             options={[
               { label: <span><Icons.Sun /> Light</span>, value: 'light' },
               { label: <span><Icons.Moon /> Dark</span>, value: 'dark' }
@@ -66,6 +67,7 @@ const Header = () => {
           <Segmented
             value={theme}
             onChange={(val) => setTheme(val as 'light' | 'dark')}
+            aria-label="Chuyển giao diện"
             options={[
               { label: <span><Icons.Sun /> Light</span>, value: 'light' },
               { label: <span><Icons.Moon /> Dark</span>, value: 'dark' }

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Typography, Space, Tag, Button } from 'antd';
+import { Card, Typography, Space, Tag, Button, message } from 'antd';
 import { theme, Icons } from '../../theme';
 import { getCourseById } from '../../services/courseService';
 import type { Course, Lesson } from '../../types/course';
@@ -25,19 +25,9 @@ const LessonDetail = () => {
       try {
         setLoading(true);
         const data = await getCourseById(courseId);
-        const courseData: Course = {
-          id: data.id.toString(),
-          title: data.title,
-          description: data.description,
-          thumbnail: data.thumbnail,
-          level: data.level,
-          kindOfCourse: data.kindOfCourse,
-          totalLessons: data.totalLessons,
-          progress: data.progress,
-          status: data.status,
-          lessons: data.lessons || []
-        };
-        setCourse(courseData);
+        setCourse({ ...data, id: data.id.toString() });
+      } catch (e) {
+        message.error('Không tải được dữ liệu bài học');
       } finally {
         setLoading(false);
       }
@@ -50,9 +40,9 @@ const LessonDetail = () => {
     return course.lessons.find(l => l.id.toString() === lessonId);
   }, [course, lessonId]);
 
-  const effectiveStatus: Lesson['status'] | 'in-progress' = (() => {
-    if (!courseId || !lessonId) return (lesson?.status as any) || 'not-started';
-    return getLessonStatus(String(courseId), String(lessonId), (lesson?.status as any) || 'not-started') as any;
+  const effectiveStatus: import('../../hooks/useProgress').LessonStatus = (() => {
+    if (!courseId || !lessonId) return (lesson?.status) || 'not-started';
+    return getLessonStatus(String(courseId), String(lessonId), (lesson?.status) || 'not-started');
   })();
 
   const handleBack = () => {
@@ -61,7 +51,7 @@ const LessonDetail = () => {
 
   const handleMarkCompleted = () => {
     if (!courseId || !lessonId) return;
-    setLessonStatus(String(courseId), String(lessonId), 'completed' as any);
+    setLessonStatus(String(courseId), String(lessonId), 'completed');
     setCourse(prev => {
       if (!prev) return prev;
       const updatedLessons: Lesson[] = prev.lessons.map(l =>

@@ -1,4 +1,5 @@
 import { Card, Tag, Progress, Typography, Space } from 'antd';
+import { memo } from 'react';
 import type { Course } from '../types/course';
 import { Icons, theme } from '../theme';
 // Button removed; entire card is clickable
@@ -16,7 +17,7 @@ interface CourseCardProps {
 const CourseCard = ({ course, onViewDetails, showStatusTag = false, showProgressBar = false }: CourseCardProps) => {
   const { getCourseProgressPercent, getCourseStatus } = useProgress();
   const computedPercent = showProgressBar ? getCourseProgressPercent(course.id, course.totalLessons) : 0;
-  const computedStatus = (showStatusTag || showProgressBar) ? getCourseStatus(course.id, course.totalLessons) : undefined as any;
+  const computedStatus = (showStatusTag || showProgressBar) ? getCourseStatus(course.id, course.totalLessons) : undefined;
   const handleViewDetails = () => {
     if (onViewDetails) {
       onViewDetails(course);
@@ -117,4 +118,4 @@ const CourseCard = ({ course, onViewDetails, showStatusTag = false, showProgress
   );
 };
 
-export default CourseCard;
+export default memo(CourseCard);
