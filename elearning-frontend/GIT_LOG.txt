@@ -1,0 +1,23 @@
+7820ecde0c0d Fri Oct 31 2025 | feat: add @tanstack/react-query
+
+e3f86ca076ac Fri Oct 31 2025 | feat: chỉnh lại icon của login
+
+d9b8d9974fc0 Fri Oct 31 2025 | feat: thêm drak mode cho login
+
+e968c0dba167 Fri Oct 31 2025 | feat: cải thiện accessibility, xử lý lỗi và an toàn kiểu dữ liệu
+
+608dec754196 Fri Oct 31 2025 | Làm chức năng dark mode
+
+74f512ae16ad Thu Oct 30 2025 | Cập nhật kiểu nút trên các thành phần Header, LessonItem, CourseDetail và LessonDetail để cải thiện tính nhất quán và khả năng phản hồi. Điều chỉnh chiều cao và khoảng đệm để mang lại trải nghiệm người dùng tốt hơn.
+
+648bce8a0286 Thu Oct 30 2025 | cải thiện responsive & kiểu toàn cục
+
+745e75d27318 Thu Oct 30 2025 | Enhance LessonItem: update status on first click; prevent open until completed.
+
+947e665d9ba6 Thu Oct 30 2025 | Cải tiến CourseCard/LessonItem thành thẻ nhấp; thêm useProgress; tối ưu mã.
+
+df5f45c830e9 Thu Oct 30 2025 | Update deps, add JSON server, React Query fetch; NotFound, LessonDetail; cleanup.
+
+4fad43f644e3 Thu Oct 30 2025 | Integrate Axios + React Query; login mutation; update AuthContext; refactor theme.
+
+60b291487eef Thu Oct 30 2025 | initial content
